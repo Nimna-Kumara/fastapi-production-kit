@@ -7,7 +7,7 @@ class UserBase(BaseModel):
     email: EmailStr
     full_name: str = Field(..., min_length=2, max_length=255)
 
-class UserCreate(BaseModel):
+class UserCreate(UserBase):
     password: str = Field(..., min_length=8, description="Min 8 chars")
 
 class UserUpdate(BaseModel):
