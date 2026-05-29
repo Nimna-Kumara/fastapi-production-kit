@@ -7,7 +7,7 @@ from app.schemas.item import ItemCrete, ItemUpdate
 
 
 class ItemService:
-    def __init_(self, db: AsyncSession):
+    def __init__(self, db: AsyncSession):
         self.db = db
 
     async def get_by_id(self, item_id: uuid.UUID, owner_id: uuid.UUID) -> Item:
@@ -38,8 +38,10 @@ class ItemService:
         item = await self.get_by_id(item_id, owner_id)
         await self.db.delete(item)
 
-    async def list_by_owner(self, owner_id: uuid.UUID, skip: int = 0, limit: int = 20) -> tuple[int, list[Item]]:
+    async def list_by_owner(
+        self, owner_id: uuid.UUID, skip: int = 0, limit: int = 20
+    ) -> tuple[int, list[Item]]:
         q = select(Item).where(Item.owner_id == owner_id)
         total = (await self.db.execute(select(func.count()).select_from(q.subquery()))).scalar_one()
         result = await self.db.execute(q.offset(skip).limit(limit))
-        return total, result.scalars().all()
+        return total, list(result.scalars().all())
