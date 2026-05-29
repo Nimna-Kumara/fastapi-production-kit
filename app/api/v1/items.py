@@ -32,3 +32,28 @@ async def create_item(
 
 
 @router.get("/{item_id}", response_model=ItemResponse)
+async def get_item(
+    item_id: uuid.UUID,
+    current_user: User = Depends(get_current_active_user),
+    db: AsyncSession = Depends(get_db)
+):
+    return await ItemService(db).get_by_id(item_id, current_user.id)
+
+
+@router.patch("/{item_id}", response_model=ItemResponse)
+async def update_item(
+    item_id: uuid.UUID,
+    data: ItemUpdate,
+    current_user: User = Depends(get_current_active_user),
+    db: AsyncSession = Depends(get_db)
+):
+    return await ItemService(db).update(item_id, current_user.id, data)
+
+
+@router.delete("/{item_id}", status_code=204)
+async def delete_item(
+    item_id: uuid.UUID,
+    current_user: User = Depends(get_current_active_user),
+    db: AsyncSession = Depends(get_db) 
+):
+    await ItemService(db).delete(item_id, current_user.id)
