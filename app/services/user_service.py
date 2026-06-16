@@ -12,7 +12,7 @@ class UserService:
         self.db = db
 
     async def get_by_id(self, user_id: uuid.UUID) -> User:
-        result = await self.db.excecute(select(User).where(User.id == user_id))
+        result = await self.db.execute(select(User).where(User.id == user_id))
         user = result.scalar_one_or_none()
         if not user:
             raise HTTPException(
@@ -21,8 +21,8 @@ class UserService:
             )
         return user
 
-    async def get_by_email(self, email: str) -> User:
-        result = await self.db.excecute(select(User).where(User.email == email.lower()))
+    async def get_by_email(self, email: str) -> User | None:
+        result = await self.db.execute(select(User).where(User.email == email.lower()))
         return result.scalar_one_or_none()
 
     async def create(self, data: UserCreate) -> User:
@@ -61,4 +61,4 @@ class UserService:
     async def list_user(self, skip: int = 0, limit: int = 20) -> tuple[int, list[User]]:
         total = (await self.db.execute(select(func.count(User.id)))).scalar_one()
         result = await self.db.execute(select(User).offset(skip).limit(limit))
-        return total, result.scalars().all()
+        return total, list(result.scalars().all())

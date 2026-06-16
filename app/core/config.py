@@ -20,8 +20,13 @@ class Settings(BaseSettings):
     # Databse
     DATABASE_URL: str
 
+    # JWT
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    ALGORITHM: str = "HS256"
+
+
     # CORS
-    ALLOWED_ORIGINS: str
+    ALLOWED_ORIGINS: str = "http://localhost:3000"
 
     # Rate limit
     RATE_LIMIT: str = "http://localhost:3000"
